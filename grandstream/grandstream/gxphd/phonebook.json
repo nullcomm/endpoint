@@ -1,0 +1,139 @@
+{
+  "template_data":{
+    "category":[
+      {
+        "name":"Phonebook",
+        "subcategory":[
+          {
+            "name":"Phonebook Settings",
+            "item":[
+              {
+                "description":"Phonebook Settings",
+                "type":"group"
+              },
+              {
+                "variable":"$pb_enable_xml",
+                "default_value":"0",
+                "description":"Enable Phonebook XML Download",
+                "type":"list",
+                "data":[
+                  {
+                    "text":"Disabled",
+                    "value":"0"
+                  },
+                  {
+                    "text":"Enabled, Use HTTP",
+                    "value":"1"
+                  },
+                  {
+                    "text":"Enabled, Use TFTP",
+                    "value":"2"
+                  },
+                  {
+                    "text":"Enabled, Use HTTPS",
+                    "value":"3"
+                  }
+                ]
+              },
+              {
+                "variable":"$pb_http_uid",
+                "default_value":"",
+                "description":"HTTP/HTTPS Username",
+                "type":"input"
+              },
+              {
+                "variable":"$pb_http_pwd",
+                "default_value":"",
+                "description":"HTTP/HTTPS Password",
+                "type":"input"
+              },
+              {
+                "variable":"$pb_xml_server",
+                "default_value":"",
+                "description":"Phonebook XML Server Path",
+                "type":"input"
+              },
+              {
+                "variable":"$pb_update_interval",
+                "default_value":"5",
+                "description":"Download Interval (minutes 5-720, 0-Disabled)",
+                "type":"input"
+              },
+              {
+                "variable":"$pb_remove_entries",
+                "default_value":"1",
+                "description":"Remove Manual Entries on Download",
+                "type":"radio",
+                "data":[
+                  {
+                    "text":"No",
+                    "value":"0"
+                  },
+                  {
+                    "text":"Yes",
+                    "value":"1"
+                  }
+                ]
+              },
+              {
+                "variable":"$pb_sort",
+                "default_value":"0",
+                "description":"Sort Phonebook by",
+                "type":"radio",
+                "data":[
+                  {
+                    "text":"Last Name",
+                    "value":"0"
+                  },
+                  {
+                    "text":"First Name",
+                    "value":"1"
+                  }
+                ]
+              },
+              {
+                "variable":"$pb_key_func",
+                "default_value":"0",
+                "description":"Phonebook Key Function",
+                "type":"list",
+                "data":[
+                  {
+                    "text":"Default",
+                    "value":"0"
+                  },
+                  {
+                    "text":"Local Phonebook",
+                    "value":"2"
+                  },
+                  {
+                    "text":"Local Group",
+                    "value":"3"
+                  }
+                ]
+              },
+              {
+                "variable":"$pb_search_mode",
+                "default_value":"0",
+                "description":"Default Search Mode",
+                "type":"radio",
+                "data":[
+                  {
+                    "text":"Quick Match",
+                    "value":"0"
+                  },
+                  {
+                    "text":"Exact Match",
+                    "value":"1"
+                  }
+                ]
+              },
+              {
+                "type":"break"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
