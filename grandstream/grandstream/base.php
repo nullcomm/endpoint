@@ -148,5 +148,4 @@ class endpoint_grandstream_base extends endpoint_base {
         $new_str[5] = chr($k & 0xff);
         return $new_str;
     }
-
 }

@@ -267,7 +267,7 @@ class endpoint_grandstream_gxphd_phone extends endpoint_grandstream_base {
         array(23790,23791,23792,23793),
         array(23795,23796,23797,23798)
     );
-
+    // TODO need to figure out why this doesn't work correctly
     function parse_lines_hook($line_data, $line_total) {
         $line_data['line_active'] = (isset($line_data['secret']) ? '1' : '0');
         return($line_data);
@@ -389,41 +389,32 @@ class endpoint_grandstream_gxphd_phone extends endpoint_grandstream_base {
 
     function reboot() {
         if (($this->engine == "asterisk") AND ($this->system == "unix")) {
+            $mac = join(':', str_split(strtolower($this->settings['mac']), 2));
+            $ip = trim((shell_exec("/usr/sbin/arp -n | grep " . $mac . " | awk '{print $1}'")));
+            $pass = (isset($this->options['admin_pass']) ? $this->options['admin_pass'] : 'admin');
 
-            exec($this->engine_location . " -rx 'sip show peers like " . $this->settings['line'][0]['username'] . "'", $output);
-            if (preg_match("/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/", $output[1], $matches)) {
-                $ip = $matches[0];
-                $pass = (isset($this->options['admin_pass']) ? $this->options['admin_pass'] : 'admin');
+            if (function_exists('curl_init')) {
+                $ckfile = tempnam($this->sys_get_temp_dir(), "GSCURLCOOKIE");
+                $ch = curl_init('http://' . $ip . '/cgi-bin/dologin');
+                curl_setopt($ch, CURLOPT_COOKIEJAR, $ckfile);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_POST, true);
 
-                if (function_exists('curl_init')) {
-                    $ckfile = tempnam($this->sys_get_temp_dir(), "GSCURLCOOKIE");
-                    $ch = curl_init('http://' . $ip . '/cgi-bin/dologin');
-                    curl_setopt($ch, CURLOPT_COOKIEJAR, $ckfile);
-                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($ch, CURLOPT_POST, true);
+                 $data = array(
+                    'password' => $pass
+                );
 
-                    $data = array(
-                        'P2' => $pass,
-                        'Login' => 'Login',
-                        'gnkey' => '0b82'
-                    );
-                    
-                     $data = array(
-                        'password' => $pass
-                    );
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+                $output = curl_exec($ch);
+                $login_result = json_decode($output, true);
+                $info = curl_getinfo($ch);
+                curl_close($ch);
 
-                    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-                    $output = curl_exec($ch);
-                    $login_result = json_decode($output, true);
-                    $info = curl_getinfo($ch);
-                    curl_close($ch);
-
-                    $ch = curl_init("http://" . $ip . "/cgi-bin/api-sys_operation?request=PROV&sid=" . $login_result['body']['sid']);
-                    curl_setopt($ch, CURLOPT_COOKIEFILE, $ckfile);
-                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                    $output = curl_exec($ch);
-                    curl_close($ch);                            
-                }
+                $ch = curl_init("http://" . $ip . "/cgi-bin/api-sys_operation?request=PROV&sid=" . $login_result['body']['sid']);
+                curl_setopt($ch, CURLOPT_COOKIEFILE, $ckfile);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                $output = curl_exec($ch);
+                curl_close($ch);                            
             }
         }
     }
