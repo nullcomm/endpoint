@@ -5530,7 +5530,7 @@ P1525 =
 # Auto-Attended Transfer. 0 - No, 1 -Yes. Default is 0
 # Number: 0, 1
 # Mandatory
-P1376 = 0
+P1376 = 1
 
 # Do not Escape '#' as 23% in SIP URL. 0 - No, 1 - Yes. Default is 0
 # Number: 0, 1
